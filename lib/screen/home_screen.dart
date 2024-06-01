@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:splendor_player/controller/bottom_nav_controller.dart';
+import 'package:splendor_player/controller/rest_api.dart';
 import 'package:splendor_player/models/playlist_model.dart';
 import 'package:splendor_player/models/song_model.dart';
 import 'package:get/get.dart';
+import 'package:splendor_player/url.dart';
 import 'package:splendor_player/widgets/widgets.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,13 +17,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  List<Song> songData = [];
+  List<Playlist> playlistData = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    API_Request.fetchSong().then((dataFromServer) {
+      setState(() {
+        songData = dataFromServer;
+      });
+    });
+
+    API_Request.fetchPlaylist().then((dataFromServer) {
+      setState(() {
+        playlistData = dataFromServer;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final BottomNavController bottomNavController = Get.find();
-    Song song = Get.arguments ?? Song.songs[0];
-    bool _isPlaying = false;
-    List<Song> songs = Song.songs;
-    List<Playlist> playlists = Playlist.playlists;
     double Heigh = MediaQuery.of(context).size.height;
     double Width = MediaQuery.of(context).size.width;
     return Container(
@@ -39,8 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               _DiscoveryMusic(),
-              _TrendingMusic(Heigh: Heigh, songs: songs, Width: Width),
-              _PlaylistMusic(playlists: playlists),
+              _TrendingMusic(Heigh: Heigh, songs: songData, Width: Width),
+              _PlaylistMusic(playlists: playlistData),
           // MiniPlayer(
           //   songs: song,
           //   isPlaying: _isPlaying,
@@ -117,13 +137,7 @@ class _TrendingMusic extends StatelessWidget {
           ),
           SizedBox(
             height: Heigh * 0.27,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: songs.length,
-              itemBuilder: (context, index) {
-                return SongCards(Width: Width, songs: songs[index]);
-              },
-            ),
+            child: SongCards(Width: 1 * Width)
           ),
         ],
       ),
@@ -154,28 +168,7 @@ class _DiscoveryMusic extends StatelessWidget {
                 .headline6
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
-          SizedBox(
-            height: 20,
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              isDense: true,
-              filled: true,
-              fillColor: Colors.white,
-              hintText: 'Search',
-              hintStyle: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Colors.grey.shade400),
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.grey.shade400,
-              ),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide.none),
-            ),
-          )
+          Container()
         ],
       ),
     );

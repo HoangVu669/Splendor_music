@@ -39,6 +39,8 @@ dependencies:
   get: ^4.6.6
   just_audio: ^0.9.36
   rxdart: ^0.27.7
+  http: ^1.2.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -57,10 +59,7 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/image/Song/
     - assets/image/
-    - assets/image/Playlist/
-    - assets/music/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

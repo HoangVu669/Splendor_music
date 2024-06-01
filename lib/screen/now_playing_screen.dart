@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:splendor_player/controller/bottom_nav_controller.dart';
+import 'package:splendor_player/controller/rest_api.dart';
 import 'package:splendor_player/models/song_model.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:splendor_player/url.dart';
 import 'package:splendor_player/widgets/widgets.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
 
@@ -14,29 +16,32 @@ class SongNow extends StatefulWidget {
 }
 
 class _SongNowState extends State<SongNow> {
-  Song song = Get.arguments ?? Song.songs[0];
+  final Song? songData = Get.arguments as Song?;
   AudioPlayer audioPlayer = AudioPlayer();
+
+  // List<Song> songData = [];
+  @override
+  void initializeAudio() {
+    if (songData != null) {
+      String validUrl = '${url}${songData!.url}'.replaceAll('\\', '/').replaceAll(' ', '%20');
+      audioPlayer.setAudioSource(
+        ConcatenatingAudioSource(
+          children: [
+            AudioSource.uri(
+              Uri.parse(validUrl),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-
-    audioPlayer.setAudioSource(
-      ConcatenatingAudioSource(
-        children: [
-          AudioSource.uri(
-            Uri.parse(
-              'asset:///${song.url}',
-            ),
-          ),
-          AudioSource.uri(
-            Uri.parse(
-              'asset:///${Song.songs[1].url}',
-            ),
-          ),
-        ],
-      ),
-    );
+    initializeAudio();
   }
 
   @override
@@ -65,103 +70,86 @@ class _SongNowState extends State<SongNow> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            song.coverurl,
+          Image.network(
+            "${url}${songData!.coverUrl}",
             fit: BoxFit.cover,
           ),
           const _BackgroundFilter(),
-          MusicPlayer(
-            song: song,
-            seekBarDataStream: _seekBarDataStream,
-            audioPlayer: audioPlayer,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class MusicPlayer extends StatelessWidget {
-  const MusicPlayer({
-    super.key,
-    required this.song,
-    required Stream<SeekBarData> seekBarDataStream,
-    required this.audioPlayer,
-  }) : _seekBarDataStream = seekBarDataStream;
-
-  final Song song;
-  final Stream<SeekBarData> _seekBarDataStream;
-  final AudioPlayer audioPlayer;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20.0,
-        vertical: 30.0,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            song.title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 30,
+          // MusicPlayer(
+          //   song: songData,
+          //   seekBarDataStream: _seekBarDataStream,
+          //   audioPlayer: audioPlayer,
+          // ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 30.0,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${songData!.title}',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 30,
+                      ),
                 ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            song.description,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15,
+                SizedBox(
+                  height: 5,
                 ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          StreamBuilder<SeekBarData>(
-            stream: _seekBarDataStream,
-            builder: (context, snapshot) {
-              final positionData = snapshot.data;
-              return SeekBar(
-                position: positionData?.position ?? Duration.zero,
-                duration: positionData?.duration ?? Duration.zero,
-                onChangeEnd: audioPlayer.seek,
-              );
-            },
-          ),
-          PlayerButton(audioPlayer: audioPlayer),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: () {},
-                iconSize: 35,
-                icon: Icon(
-                  Icons.settings,
-                  color: Colors.white,
+                Text(
+                  '${songData!.description}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                      ),
                 ),
-              ),
-              IconButton(
-                iconSize: 35,
-                onPressed: () {},
-                icon: Icon(
-                  Icons.cloud_download,
-                  color: Colors.white,
+                SizedBox(
+                  height: 30,
                 ),
-              ),
-            ],
+                StreamBuilder<SeekBarData>(
+                  stream: _seekBarDataStream,
+                  builder: (context, snapshot) {
+                    final positionData = snapshot.data;
+                    return SeekBar(
+                      position: positionData?.position ?? Duration.zero,
+                      duration: positionData?.duration ?? Duration.zero,
+                      onChangeEnd: audioPlayer.seek,
+                    );
+                  },
+                ),
+                PlayerButton(audioPlayer: audioPlayer),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      iconSize: 35,
+                      icon: Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                      ),
+                    ),
+                    IconButton(
+                      iconSize: 35,
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.cloud_download,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),

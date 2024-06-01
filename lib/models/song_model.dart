@@ -1,40 +1,25 @@
 class Song {
+  // final String id;
   final String title;
   final String description;
   final String url;
-  final String coverurl;
+  final String coverUrl;
 
   Song({
+    // required this.id,
     required this.title,
     required this.description,
     required this.url,
-    required this.coverurl,
+    required this.coverUrl,
   });
 
-  static List<Song> songs = [
-    Song(
-      title: "EM XINH",
-      description: "MONO",
-      url: "assets/music/Em Xinh.mp3",
-      coverurl: "assets/image/Song/em xinh.png",
-    ),
-    Song(
-      title: "CHÚNG TA ",
-      description: "SƠN TÙNG M-TP",
-      url: "assets/music/CHÚNG TA CỦA TƯƠNG LAI.mp3",
-      coverurl: "assets/image/Song/CHÚNG TA CỦA TƯƠNG LAI.png",
-    ),
-    Song(
-      title: "A đến Ă",
-      description: "Dương Domic",
-      url: "assets/music/A ĐẾN Ă.mp3",
-      coverurl: "assets/image/Song/A ĐẾN Ă.jpg",
-    ),
-    Song(
-      title: "YÊU EM ",
-      description: "Dương Domic",
-      url: "assets/music/YÊU EM 2 NGÀY.mp3",
-      coverurl: "assets/image/Song/YÊU EM 2 NGÀY.jpg",
-    ),
-  ];
+  factory Song.fromJson(Map<String, dynamic> json) {
+    return Song(
+      // id: json['_id'],
+      title: json['title'],
+      description: json['description'],
+      url: json['url'],
+      coverUrl: json['coverurl'],
+    );
+  }
 }

@@ -10,12 +10,25 @@ class FavoriteScreen extends StatefulWidget {
 class _FavoriteScreenState extends State<FavoriteScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Favorite"),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.deepPurple.shade800.withOpacity(1.0),
+            Colors.deepPurple.shade200.withOpacity(0.8)
+          ],
+        ),
       ),
-      body: Center(
-        child: Text("Favorite"),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: Text("Favorite"),
+        ),
+        body: Center(
+          child: Text("Favorite"),
+        ),
       ),
     );
   }

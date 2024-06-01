@@ -5,14 +5,15 @@ import 'package:splendor_player/screen/Favorite_Screen.dart';
 import 'package:splendor_player/screen/home_screen.dart';
 import 'package:splendor_player/screen/now_playing_screen.dart';
 import 'package:splendor_player/screen/profile_screen.dart';
+import 'package:splendor_player/screen/search_screen.dart';
 
 class MainScreen extends StatelessWidget {
   final BottomNavController bottomNavController = Get.put(BottomNavController());
 
   final List<Widget> _screens = [
     HomeScreen(),
+    SearchScreen(),
     FavoriteScreen(),
-    SongNow(),
     ProfileScreen(),
   ];
 
@@ -39,12 +40,12 @@ class MainScreen extends StatelessWidget {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border),
-              label: 'Favorite',
+              icon: Icon(Icons.search_rounded, size: 25,),
+              label: 'Search',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.play_circle_outline_rounded),
-              label: 'Song',
+              icon: Icon(Icons.favorite_border),
+              label: 'Favorite',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.people_outline),

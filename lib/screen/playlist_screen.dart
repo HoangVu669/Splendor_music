@@ -1,14 +1,34 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:splendor_player/controller/rest_api.dart';
 import 'package:splendor_player/models/playlist_model.dart';
 
-class PlayListScreen extends StatelessWidget {
+class PlayListScreen extends StatefulWidget {
   const PlayListScreen({super.key});
 
   @override
+  State<PlayListScreen> createState() => _PlayListScreenState();
+}
+
+class _PlayListScreenState extends State<PlayListScreen> {
+
+  List<Playlist> playlistData = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    API_Request.fetchPlaylist().then((dataFromServer) {
+      setState(() {
+        playlistData = dataFromServer;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Playlist playlist = Playlist.playlists[0];
+    Playlist playlist  = playlistData.first;
     double Heigh = MediaQuery.of(context).size.height;
     double Width = MediaQuery.of(context).size.width;
     return Container(
@@ -35,25 +55,44 @@ class PlayListScreen extends StatelessWidget {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                _PlaylistInformation(playlist: playlist, Heigh: Heigh),
-                const SizedBox(
-                  height: 30,
-                ),
-                const _PlayOrShuffleSwitch(),
-                SizedBox(
-                  height: 30,
-                ),
-                PlaylistSong(playlist: playlist)
-              ],
-            ),
+            child: playlistData.isNotEmpty
+                ? _buildPlaylist(Heigh, Width)
+                : _buildEmptyState(),
           ),
         ),
       ),
     );
   }
+
+  Widget _buildPlaylist(double height, double width) {
+    double Heigh = MediaQuery.of(context).size.height;
+    Playlist playlist = playlistData.first;
+
+    return Column(
+      children: [
+        _PlaylistInformation(playlist: playlist, Heigh: Heigh),
+        const SizedBox(
+          height: 30,
+        ),
+        const _PlayOrShuffleSwitch(),
+        SizedBox(
+          height: 30,
+        ),
+        PlaylistSong(playlist: playlist),
+      ],
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Text(
+        'No playlist available',
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
 }
+
 
 class PlaylistSong extends StatelessWidget {
   const PlaylistSong({

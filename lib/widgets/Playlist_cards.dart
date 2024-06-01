@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:splendor_player/controller/rest_api.dart';
 import 'package:splendor_player/models/playlist_model.dart';
 
-class PlaylistCard extends StatelessWidget {
+class PlaylistCard extends StatefulWidget {
   const PlaylistCard({
     super.key,
     required this.playlists,
@@ -12,10 +13,27 @@ class PlaylistCard extends StatelessWidget {
   final Playlist playlists;
 
   @override
+  State<PlaylistCard> createState() => _PlaylistCardState();
+}
+
+class _PlaylistCardState extends State<PlaylistCard> {
+  List<Playlist> playlistData = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    API_Request.fetchPlaylist().then((dataFromServer) {
+      setState(() {
+        playlistData = dataFromServer;
+      });
+    });
+  }
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.toNamed('/Playlist', arguments: playlists);
+        Get.toNamed('/Playlist', arguments: playlistData);
       },
       child: Container(
         height: 75,
@@ -31,7 +49,7 @@ class PlaylistCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
               child: Image.network(
-                playlists.imageUrl,
+                widget.playlists.imageUrl,
                 height: 50,
                 width: 50,
                 fit: BoxFit.cover,
@@ -44,13 +62,13 @@ class PlaylistCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    playlists.title,
+                    widget.playlists.title,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                   ),
                   Text(
-                    '${playlists.songs.length} songs',
+                    '${widget.playlists.songs.length} songs',
                     maxLines: 2,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),

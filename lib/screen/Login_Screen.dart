@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:splendor_player/controller/auth.dart';
+import 'package:splendor_player/controller/userProvider.dart';
 import 'package:splendor_player/screen/Main_Screen.dart';
 import 'package:splendor_player/screen/SignUp_Screen.dart';
+import 'package:splendor_player/screen/profile_screen.dart';
 import 'package:splendor_player/widgets/widgets.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -18,6 +22,10 @@ class _LogInScreenState extends State<LogInScreen> {
   Widget build(BuildContext context) {
     double Heigh = MediaQuery.of(context).size.height;
     double Width = MediaQuery.of(context).size.width;
+
+    // Lấy thông tin người dùng từ Provider
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -53,14 +61,33 @@ class _LogInScreenState extends State<LogInScreen> {
                 const SizedBox(
                   height: 10,
                 ),
-                CustomTextField("Enter Password", Icons.person_outline, false,
+                CustomTextField("Enter Password", Icons.lock_outline, true,
                     _passwordTextController),
                 const SizedBox(
                   height: 10,
                 ),
-                LoginSignUpButton(context, "Log In", () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MainScreen()));
+                LoginSignUpButton(context, "Log In", () async  {
+                  // Thực hiện đăng nhập
+                  var result = await login(
+                      _emailTextController.text, _passwordTextController.text);
+                  // Kiểm tra kết quả đăng nhập
+                  if (result == true) {
+                    // Đăng nhập thành công, chuyển hướng đến MainScreen
+                    userProvider.setUser(_emailTextController.text);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MainScreen()),
+                    );
+                  } else {
+                    // Đăng nhập thất bại, xử lý thông báo hoặc hành động khác
+                    // Ví dụ: Hiển thị thông báo lỗi
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Login failed! Please try again.'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 }),
                 const SizedBox(),
                 forgetPassword(context),

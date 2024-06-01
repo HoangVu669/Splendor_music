@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:splendor_player/controller/userProvider.dart';
 import 'package:splendor_player/screen/Login_Screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -11,8 +13,11 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     double Heigh = MediaQuery.of(context).size.height;
     double Width = MediaQuery.of(context).size.width;
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -42,8 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundImage:
-                    AssetImage("assets/image/user-default.3ff115bb.png"),
+                backgroundImage: AssetImage("assets/image/user-default.3ff115bb.png"),
                 radius: 50,
               ),
               SizedBox(
@@ -51,17 +55,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen(),));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
                 },
                 child: Container(
                   width: Width * 0.4,
                   height: Heigh * 0.06,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white.withOpacity(0.4)),
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white.withOpacity(0.4),
+                  ),
                   child: Center(
                     child: Text(
-                      "ĐĂNG NHẬP",
+                      userProvider.username ?? "ĐĂNG NHẬP",
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium
@@ -77,6 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
