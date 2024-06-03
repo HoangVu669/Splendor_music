@@ -69,22 +69,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   height: 20,
                 ),
                 LoginSignUpButton(context, "Sign Up", () async {
-                  // Thực hiện đăng ký
                   var result = await register(
                     _userNameTextController.text,
                     // _emailTextController.text,
                     _passwordTextController.text,
                   );
-                  // Kiểm tra kết quả đăng ký
                   if (result == true) {
-                    // Đăng ký thành công, chuyển hướng đến LogInScreen
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => LogInScreen()),
                     );
                   } else {
-                    // Đăng ký thất bại, xử lý thông báo hoặc hành động khác
-                    // Ví dụ: Hiển thị thông báo lỗi
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Registration failed! Please try again.'),

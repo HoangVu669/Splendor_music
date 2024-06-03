@@ -7,4 +7,9 @@ class UserProvider extends ChangeNotifier {
     username = name;
     notifyListeners();
   }
+
+  void logout() {
+    username = null;
+    notifyListeners();
+  }
 }

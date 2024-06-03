@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
 import 'package:splendor_player/models/playlist_model.dart';
 import 'package:splendor_player/models/song_model.dart';
 import 'package:http/http.dart' as http;
@@ -49,4 +50,34 @@ class API_Request {
     }
   }
 
+
+  static Future<void> uploadSong({
+    required String title,
+    required String description,
+    required String songPath,
+    required String coverPath,
+  }) async {
+    final urlPath = '${url}songs';
+
+    var request = http.MultipartRequest('POST', Uri.parse(urlPath))
+      ..fields['title'] = title
+      ..fields['description'] = description
+      ..files.add(await http.MultipartFile.fromPath('url', songPath))
+      ..files.add(await http.MultipartFile.fromPath('coverurl', coverPath));
+
+    var response = await request.send();
+    if (response.statusCode != 201) {
+      throw Exception('Failed to upload: ${response.statusCode}');
+    }
+  }
+
+  static Future<String> pickFile({FileType type = FileType.any}) async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: type);
+
+    if (result != null) {
+      return result.files.single.path!;
+    } else {
+      throw Exception('No file selected');
+    }
+  }
 }
