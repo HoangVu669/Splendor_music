@@ -17,7 +17,7 @@ class _UploadScreenState extends State<UploadScreen> {
 
   void pickSong() async {
     try {
-      String path = await API_Request.pickFile(type: FileType.audio);
+      String path = await API_Request.pickFile();
       setState(() {
         songPath = path;
       });
@@ -28,7 +28,7 @@ class _UploadScreenState extends State<UploadScreen> {
 
   void pickCover() async {
     try {
-      String path = await API_Request.pickFile(type: FileType.image);
+      String path = await API_Request.pickFile();
       setState(() {
         coverPath = path;
       });
@@ -46,7 +46,8 @@ class _UploadScreenState extends State<UploadScreen> {
         coverPath: coverPath,
       );
       print('Uploaded successfully');
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MainScreen()));
     } catch (e) {
       print('Error uploading: $e');
     }
@@ -87,7 +88,10 @@ class _UploadScreenState extends State<UploadScreen> {
                   onPressed: pickCover,
                   child: Text('Pick Cover'),
                 ),
-                Text(coverPath.isNotEmpty ? coverPath : 'No cover selected'),
+                Text(
+                  coverPath.isNotEmpty ? coverPath : 'No cover selected',
+                  style: TextStyle(color: Colors.black),
+                ),
                 if (coverPath.isNotEmpty)
                   Image.file(
                     File(coverPath),

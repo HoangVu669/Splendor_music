@@ -20,11 +20,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Song> songData = [];
   List<Playlist> playlistData = [];
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _fetchData();
     API_Request.fetchSong().then((dataFromServer) {
       setState(() {
         songData = dataFromServer;
@@ -36,6 +38,25 @@ class _HomeScreenState extends State<HomeScreen> {
         playlistData = dataFromServer;
       });
     });
+
+
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      final songs = await API_Request.fetchSong();
+      final playlists = await API_Request.fetchPlaylist();
+      setState(() {
+        songData = songs;
+        playlistData = playlists;
+      });
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
+  Future<void> _resetApp() async {
+    await _fetchData();
   }
 
   @override
@@ -55,23 +76,27 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: _CustomAppbar(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _DiscoveryMusic(),
-              _TrendingMusic(Heigh: Heigh, songs: songData, Width: Width),
-              _PlaylistMusic(playlists: playlistData),
-          // MiniPlayer(
-          //   songs: song,
-          //   isPlaying: _isPlaying,
-          //   togglePlay: () {
-          //     setState(() {
-          //       _isPlaying = !_isPlaying;
-          //       // Thêm logic điều khiển phát nhạc ở đây
-          //     });
-          //   },
-          // ),
-            ],
+        body: RefreshIndicator(
+          key: _refreshIndicatorKey,
+          onRefresh: _resetApp,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _DiscoveryMusic(),
+                _TrendingMusic(Heigh: Heigh, songs: songData, Width: Width),
+                _PlaylistMusic(playlists: playlistData),
+            // MiniPlayer(
+            //   songs: song,
+            //   isPlaying: _isPlaying,
+            //   togglePlay: () {
+            //     setState(() {
+            //       _isPlaying = !_isPlaying;
+            //       // Thêm logic điều khiển phát nhạc ở đây
+            //     });
+            //   },
+            // ),
+              ],
+            ),
           ),
         ),
       ),
